@@ -1,87 +1,41 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>💞💗🐷Hải Yến🐷💕💗 — Floating Party</title>
-<style>
-  body {
-    margin: 0;
-    overflow: hidden;
-    background: #fff0f6;
-    font-family: Arial, sans-serif;
-  }
-  .sprite {
-    position: absolute;
-    will-change: transform, opacity;
-    pointer-events: none;
-  }
-  .stamp {
-    font-size: 28px;
-  }
-  img.sprite {
-    width: 120px;
-    height: auto;
-    border-radius: 16px;
-  }
-</style>
-</head>
-<body>
-<div id="stage"></div>
-<script>
-const IMAGES = [
-  "bcf1c220.png",
-  "cb72bda9.png",
-  "cd793bdb.png",
-  "ea0e227c.png",
-  "e002f037.png",
-  "5df34825.png",
-  "0c6312e8.png",
-  "4dab0a91.png"
-];
-const TEXT = "💞💗🐷Hải Yến🐷💕💗";
-const stage = document.getElementById('stage');
-const W = () => window.innerWidth;
-const H = () => window.innerHeight;
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>💞💗🐷Hải Yến🐷💕💗 — Floating Party</title>
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background: #fff0f6;
+      font-family: Arial, sans-serif;
+    }
+    .sprite {
+      position: absolute;
+      will-change: transform, opacity;
+      pointer-events: none;
+    }
+    .stamp {
+      font-size: 28px;
+    }
+    img.sprite {
+      width: 120px;
+      height: auto;
+      border-radius: 16px;
+    }
 
-function rand(min, max) { return Math.random() * (max - min) + min; }
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-function makeSprite() {
-  const isText = Math.random() < 0.4;
-  let el;
-  if (isText) {
-    el = document.createElement('div');
-    el.className = 'sprite stamp';
-    el.textContent = TEXT;
-    el.style.fontSize = rand(18, 34) + 'px';
-  } else {
-    el = document.createElement('img');
-    el.className = 'sprite';
-    el.src = pick(IMAGES);
-  }
-  el.style.left = rand(0, W() - 120) + 'px';
-  el.style.top = H() + 'px';
-  stage.appendChild(el);
-
-  const vx = rand(-50, 50);    // tốc độ ngang
-  const vy = rand(40, 100);    // tốc độ lên
-  const ttl = rand(4, 7);      // sống bao lâu (giây)
-  const born = performance.now();
-
-  function step(now) {
-    const t = (now - born) / 1000;
-    if (t >= ttl) { el.remove(); return; }
-    // bay chéo + mờ dần
-    el.style.transform = `translate(${vx * t}px, ${-vy * t}px)`;
-    el.style.opacity = 1 - (t / ttl);
-    requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
-}
-
-// tạo sprite liên tục
-setInterval(makeSprite, 500);
-</script>
-</body>
-</html>
+    /* Phần ảnh hiển thị */
+    #gallery {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    #gallery h2 {
+      color: #e91e63;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    #gallery img {
+      width: 180px;
+      margin: 10px;
+      border-radius: 12px;
