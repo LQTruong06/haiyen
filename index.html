@@ -2,87 +2,105 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Phượng Mazda</title>
+  <title>In câu vui</title>
   <style>
     body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffecd2, #fcb69f);
+      text-align: center;
       margin: 0;
       height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fad0c4);
-      font-family: 'Comic Sans MS', cursive, sans-serif;
       overflow: hidden;
     }
+    .msg {
+      font-size: 22px;
+      margin: 15px auto;
+      padding: 15px 25px;
+      border-radius: 20px;
+      background: #fff;
+      width: fit-content;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 1s forwards;
+      position: relative;
+      z-index: 2;
+    }
+    .msg:nth-child(1) { animation-delay: 0.3s; }
+    .msg:nth-child(2) { animation-delay: 0.8s; }
+    .msg:nth-child(3) { animation-delay: 1.3s; }
 
-    h1 {
-      font-size: 48px;
-      color: #ff0054;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-      animation: bounce 2s infinite;
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    h2 {
-      font-size: 32px;
-      color: #0077b6;
-      margin-top: 10px;
-      animation: fadeIn 3s ease-in-out infinite alternate;
-    }
-
-    h3 {
-      font-size: 28px;
-      color: #ff6600;
-      margin-top: 10px;
-      animation: shake 1s infinite;
-    }
-
-    /* Hiệu ứng nhún nhảy */
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
-
-    /* Hiệu ứng nhấp nháy */
-    @keyframes fadeIn {
-      0% { opacity: 0.3; }
-      100% { opacity: 1; }
-    }
-
-    /* Hiệu ứng rung */
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); }
-      75% { transform: translateX(-5px); }
-      100% { transform: translateX(0); }
+    .msg:hover {
+      transform: scale(1.08);
+      transition: 0.3s;
+      background: #ffeaa7;
     }
 
     /* Trái tim bay */
     .heart {
       position: absolute;
-      bottom: 0;
-      font-size: 24px;
-      color: red;
-      animation: floatUp 5s linear infinite;
+      color: #ff4d6d;
+      font-size: 20px;
+      animation: floatUp 4s linear forwards;
+      opacity: 0.8;
+      z-index: 1;
     }
 
     @keyframes floatUp {
-      0% { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) scale(1.5);
+        opacity: 0;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Chào Phượng nhé !!!</h1>
-  <h2>Bạn thật là cute &lt;3</h2>
-  <h3>Hẹ Hẹ Hẹ</h3>
+  <div id="messages"></div>
 
-  <!-- Trái tim -->
-  <div class="heart" style="left:10%;">❤</div>
-  <div class="heart" style="left:30%; animation-delay:1s;">❤</div>
-  <div class="heart" style="left:50%; animation-delay:2s;">❤</div>
-  <div class="heart" style="left:70%; animation-delay:3s;">❤</div>
-  <div class="heart" style="left:90%; animation-delay:4s;">❤</div>
+  <script>
+    const sentences = [
+      "Hải Yến là Con lợn nhựa ngủ nhiều",
+      "Nhưng mà xinggg gái, cute nhất tgioi",
+      "hẹ hẹ hẹ"
+    ];
+
+    const container = document.getElementById("messages");
+    sentences.forEach(text => {
+      const div = document.createElement("div");
+      div.className = "msg";
+      div.textContent = text;
+      container.appendChild(div);
+    });
+
+    // Tạo trái tim bay ngẫu nhiên
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "❤";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.bottom = "0px";
+      heart.style.fontSize = (Math.random() * 20 + 15) + "px";
+      document.body.appendChild(heart);
+
+      // Xoá sau khi bay xong
+      setTimeout(() => {
+        heart.remove();
+      }, 4000);
+    }
+
+    // Tạo nhiều trái tim liên tục
+    setInterval(createHeart, 500);
+  </script>
 </body>
 </html>
