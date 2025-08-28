@@ -7,8 +7,8 @@
   <style>
     body {
       margin: 0;
-      overflow-x: hidden;
-      background: #fff0f6;
+      overflow: hidden;
+      background: #ffe6f0; /* màu hồng nhạt dễ thương */
       font-family: Arial, sans-serif;
     }
     .sprite {
@@ -24,18 +24,75 @@
       height: auto;
       border-radius: 16px;
     }
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
 
-    /* Phần ảnh hiển thị */
-    #gallery {
-      text-align: center;
-      padding: 40px 20px;
+  <script>
+    const IMAGES = [
+      "img/haiyen1.jpg",
+      "img/haiyen2.jpg",
+      "img/haiyen3.jpg",
+      "img/haiyen4.jpg",
+      "img/haiyen5.jpg",
+      "img/haiyen6.jpg",
+      "img/haiyen7.jpg",
+      "img/haiyen8.jpg",
+      "img/haiyen9.jpg"
+    ];
+
+    const TEXT = "💞💗🐷Hải Yến🐷💕💗";
+    const stage = document.getElementById('stage');
+    const W = () => window.innerWidth;
+    const H = () => window.innerHeight;
+
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
     }
-    #gallery h2 {
-      color: #e91e63;
-      font-size: 28px;
-      margin-bottom: 20px;
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
     }
-    #gallery img {
-      width: 180px;
-      margin: 10px;
-      border-radius: 12px;
+
+    function makeSprite() {
+      const isText = Math.random() < 0.4;
+      let el;
+      if (isText) {
+        el = document.createElement('div');
+        el.className = 'sprite stamp';
+        el.textContent = TEXT;
+        el.style.fontSize = rand(18, 34) + 'px';
+      } else {
+        el = document.createElement('img');
+        el.className = 'sprite';
+        el.src = pick(IMAGES);
+      }
+
+      el.style.left = rand(0, W() - 120) + 'px';
+      el.style.top = H() + 'px';
+      stage.appendChild(el);
+
+      const vx = rand(-50, 50); // tốc độ ngang
+      const vy = rand(40, 100); // tốc độ lên
+      const ttl = rand(4, 7);   // sống bao lâu (giây)
+      const born = performance.now();
+
+      function step(now) {
+        const t = (now - born) / 1000;
+        if (t >= ttl) {
+          el.remove();
+          return;
+        }
+        el.style.transform = `translate(${vx * t}px, ${-vy * t}px)`;
+        el.style.opacity = 1 - (t / ttl);
+        requestAnimationFrame(step);
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    setInterval(makeSprite, 500);
+  </script>
+</body>
+</html>
