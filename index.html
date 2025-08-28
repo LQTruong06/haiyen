@@ -60,24 +60,27 @@ function makeSprite() {
     el.className = 'sprite';
     el.src = pick(IMAGES);
   }
-  el.style.left = rand(0, W() - 100) + 'px';
+  el.style.left = rand(0, W() - 120) + 'px';
   el.style.top = H() + 'px';
   stage.appendChild(el);
 
-  const vx = rand(-120, 120);
-  const vy = rand(-100, -30);
-  const ttl = rand(4, 7); // giây
+  const vx = rand(-50, 50);    // tốc độ ngang
+  const vy = rand(40, 100);    // tốc độ lên
+  const ttl = rand(4, 7);      // sống bao lâu (giây)
   const born = performance.now();
 
   function step(now) {
     const t = (now - born) / 1000;
     if (t >= ttl) { el.remove(); return; }
-    el.style.transform = translateY(${ -vy * t }px);
+    // bay chéo + mờ dần
+    el.style.transform = `translate(${vx * t}px, ${-vy * t}px)`;
+    el.style.opacity = 1 - (t / ttl);
     requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
 
+// tạo sprite liên tục
 setInterval(makeSprite, 500);
 </script>
 </body>
