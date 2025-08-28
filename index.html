@@ -1,98 +1,220 @@
+# Create ASP.NET Core Razor Pages project structure and zip it, including provided images.
+import os, shutil, textwrap, json, zipfile, pathlib
+
+project_root = "/mnt/data/FlyingHearts"
+wwwroot = os.path.join(project_root, "wwwroot")
+images_dir = os.path.join(wwwroot, "images")
+pages_dir = os.path.join(project_root, "Pages")
+os.makedirs(images_dir, exist_ok=True)
+os.makedirs(pages_dir, exist_ok=True)
+
+# Copy provided images into wwwroot/images with simple names
+provided = [
+    ("/mnt/data/a3c8754f-7948-4ef7-84d9-9dead7169ea6.png", "img1.png"),
+    ("/mnt/data/4c694577-2b27-4214-ae5c-8055618d1ec8.png", "img2.png"),
+    ("/mnt/data/545b7484-271b-4e7c-9e92-a68cc33900fa.png", "img3.png"),
+    ("/mnt/data/7ddf64b4-f404-48e6-a869-c91da202c24c.png", "img4.png"),
+    ("/mnt/data/d35acae3-6eab-4d0b-8006-5569058422f6.png", "img5.png"),
+    ("/mnt/data/dd131329-457d-4901-b3b9-76932f9fdeab.png", "img6.png"),
+    ("/mnt/data/295468e0-487d-470a-9d32-938c157af670.png", "img7.png"),
+    ("/mnt/data/7bd4fb96-e948-4a25-ac84-2515da97c474.png", "img8.png"),
+]
+
+for src, name in provided:
+    if os.path.exists(src):
+        shutil.copy(src, os.path.join(images_dir, name))
+
+# Program.cs
+program_cs = r'''
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddRazorPages();
+
+var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.MapRazorPages();
+app.Run();
+'''
+open(os.path.join(project_root, "Program.cs"), "w", encoding="utf-8").write(program_cs.strip()+"\n")
+
+# csproj
+csproj = r'''
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+</Project>
+'''
+open(os.path.join(project_root, "FlyingHearts.csproj"), "w", encoding="utf-8").write(csproj.strip()+"\n")
+
+# _ViewImports.cshtml
+view_imports = r'''
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.AspNetCore.Mvc.RazorPages
+'''
+open(os.path.join(pages_dir, "_ViewImports.cshtml"), "w", encoding="utf-8").write(view_imports.strip()+"\n")
+
+# _ViewStart.cshtml
+view_start = r'''
+@{
+    Layout = null;
+}
+'''
+open(os.path.join(pages_dir, "_ViewStart.cshtml"), "w", encoding="utf-8").write(view_start.strip()+"\n")
+
+# Index.cshtml.cs
+index_cs = r'''
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+public class IndexModel : PageModel
+{
+    public void OnGet()
+    {
+    }
+}
+'''
+open(os.path.join(pages_dir, "Index.cshtml.cs"), "w", encoding="utf-8").write(index_cs.strip()+"\n")
+
+# Index.cshtml with animation
+index_cshtml = r'''
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "💞 Hải Yến 💞";
+}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>💞💗🐷Hải Yến🐷💕💗 — Floating Party</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: #ffe6f0; /* màu hồng nhạt dễ thương */
-      font-family: Arial, sans-serif;
-    }
-    .sprite {
-      position: absolute;
-      will-change: transform, opacity;
-      pointer-events: none;
-    }
-    .stamp {
-      font-size: 28px;
-    }
-    img.sprite {
-      width: 120px;
-      height: auto;
-      border-radius: 16px;
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>💞 Hải Yến 💞</title>
+    <style>
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: radial-gradient(circle at 30% 20%, #fff7fb, #ffffff 40%), #ffffff;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+        }
+        .floating {
+            position: absolute;
+            animation: fly linear infinite;
+            will-change: transform, opacity;
+            pointer-events: none;
+            user-select: none;
+        }
+        img.floating {
+            width: 120px;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.15);
+        }
+        .emoji {
+            font-size: clamp(22px, 4vw, 42px);
+            text-shadow: 0 6px 20px rgba(255, 105, 180, .35);
+        }
+        @keyframes fly {
+            from {
+                transform: translate3d(var(--x), 110vh, 0) rotate(var(--rotStart));
+                opacity: 1;
+            }
+            to {
+                transform: translate3d(calc(var(--x) + var(--drift)), -140vh, 0) rotate(var(--rotEnd));
+                opacity: 0;
+            }
+        }
+        .center {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            z-index: -1;
+            color: #ff4d8d;
+            font-size: clamp(28px, 5vw, 56px);
+            opacity: .08;
+        }
+    </style>
 </head>
 <body>
-  <div id="stage"></div>
+    <div class="center">💞💗🐷Hải Yến🐷💕💗</div>
+    <script>
+        const images = [
+            "/images/img1.png",
+            "/images/img2.png",
+            "/images/img3.png",
+            "/images/img4.png",
+            "/images/img5.png",
+            "/images/img6.png",
+            "/images/img7.png",
+            "/images/img8.png"
+        ];
+        const texts = ["💞💗🐷Hải Yến🐷💕💗"];
 
-  <script>
-    const IMAGES = [
-      "img/haiyen1.jpg",
-      "img/haiyen2.jpg",
-      "img/haiyen3.jpg",
-      "img/haiyen4.jpg",
-      "img/haiyen5.jpg",
-      "img/haiyen6.jpg",
-      "img/haiyen7.jpg",
-      "img/haiyen8.jpg",
-      "img/haiyen9.jpg"
-    ];
+        function random(min, max) { return Math.random() * (max - min) + min; }
 
-    const TEXT = "💞💗🐷Hải Yến🐷💕💗";
-    const stage = document.getElementById('stage');
-    const W = () => window.innerWidth;
-    const H = () => window.innerHeight;
+        function spawn() {
+            const useImage = Math.random() > 0.45; // mix ảnh và text
+            const el = document.createElement(useImage ? "img" : "div");
 
-    function rand(min, max) {
-      return Math.random() * (max - min) + min;
-    }
+            if (useImage) {
+                el.src = images[Math.floor(Math.random() * images.length)];
+                el.className = "floating";
+            } else {
+                el.className = "floating emoji";
+                el.textContent = texts[0];
+            }
 
-    function pick(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
+            const startX = Math.floor(random(0, window.innerWidth)) + "px";
+            const drift = Math.floor(random(-200, 200)) + "px";
+            const rotStart = Math.floor(random(-30, 30)) + "deg";
+            const rotEnd = Math.floor(random(330, 690)) + "deg";
+            const duration = random(7, 14) + "s";
 
-    function makeSprite() {
-      const isText = Math.random() < 0.4;
-      let el;
-      if (isText) {
-        el = document.createElement('div');
-        el.className = 'sprite stamp';
-        el.textContent = TEXT;
-        el.style.fontSize = rand(18, 34) + 'px';
-      } else {
-        el = document.createElement('img');
-        el.className = 'sprite';
-        el.src = pick(IMAGES);
-      }
+            el.style.setProperty("--x", startX);
+            el.style.setProperty("--drift", drift);
+            el.style.setProperty("--rotStart", rotStart);
+            el.style.setProperty("--rotEnd", rotEnd);
+            el.style.animationDuration = duration;
 
-      el.style.left = rand(0, W() - 120) + 'px';
-      el.style.top = H() + 'px';
-      stage.appendChild(el);
-
-      const vx = rand(-50, 50); // tốc độ ngang
-      const vy = rand(40, 100); // tốc độ lên
-      const ttl = rand(4, 7);   // sống bao lâu (giây)
-      const born = performance.now();
-
-      function step(now) {
-        const t = (now - born) / 1000;
-        if (t >= ttl) {
-          el.remove();
-          return;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 16000);
         }
-        el.style.transform = `translate(${vx * t}px, ${-vy * t}px)`;
-        el.style.opacity = 1 - (t / ttl);
-        requestAnimationFrame(step);
-      }
 
-      requestAnimationFrame(step);
-    }
-
-    setInterval(makeSprite, 500);
-  </script>
+        // Tạo liên tục
+        setInterval(spawn, 700);
+        // Khởi tạo vài cái ngay khi tải trang
+        for (let i = 0; i < 12; i++) spawn();
+    </script>
 </body>
 </html>
+'''
+open(os.path.join(pages_dir, "Index.cshtml"), "w", encoding="utf-8").write(index_cshtml.strip()+"\n")
+
+# appsettings.json (minimal)
+open(os.path.join(project_root, "appsettings.json"), "w", encoding="utf-8").write('{\n  "Logging": { "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning" } }\n}\n')
+
+# Zip the project
+zip_path = "/mnt/data/FlyingHearts.zip"
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    for root, dirs, files in os.walk(project_root):
+        for f in files:
+            full = os.path.join(root, f)
+            rel = os.path.relpath(full, project_root)
+            z.write(full, arcname=os.path.join("FlyingHearts", rel))
+
+zip_path
